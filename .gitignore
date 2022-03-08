@@ -1,0 +1,16 @@
+publisher/Cargo.lock
+publisher/target
+publisher/open_project.sh
+
+subscriber/Cargo.lock
+subscriber/target
+subscriber/open_project.sh
+
+test_message_bus/message_bus/Cargo.lock
+test_message_bus/message_bus/target
+
+test_message_bus/subscriber/Cargo.lock
+test_message_bus/subscriber/target
+
+test_message_bus/publisher/Cargo.lock
+test_message_bus/publisher/target
