@@ -11,10 +11,10 @@ pub async fn main()
     while true
     {
 
-      let message = subscriber.receive().await;
+      let message = subscriber.receive_raw().await;
       println!("{} Time received: {}", message, 
                chrono::Utc::now().timestamp_nanos());
-      publisher.send_string("topic", &message.as_str());
+      publisher.send_string("", &message.as_str());
     }
 
 }

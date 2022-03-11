@@ -9,8 +9,8 @@ subscriber/open_project.sh
 test_message_bus/message_bus/Cargo.lock
 test_message_bus/message_bus/target
 
-test_message_bus/subscriber/Cargo.lock
-test_message_bus/subscriber/target
+test_message_bus/subscriber_app/Cargo.lock
+test_message_bus/subscriber_app/target
 
-test_message_bus/publisher/Cargo.lock
-test_message_bus/publisher/target
+test_message_bus/publisher_app/Cargo.lock
+test_message_bus/publisher_app/target

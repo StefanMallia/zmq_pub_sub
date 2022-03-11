@@ -1,5 +1,5 @@
 [package]
-name = "publisher1"
+name = "subscriber_app"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,8 +7,6 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
-publisher = { path = "../../publisher/" }
+subscriber = { path = "../../subscriber/" }
 config_helper = {version = "0.1.0", git="https://github.com/StefanMallia/config_helper", branch="main"}
-chrono = "0.4.19"
-
 

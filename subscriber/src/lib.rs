@@ -27,16 +27,20 @@ impl Subscriber
   }
 
   pub async fn receive(&self) -> String
+  {    
+    match self.receive_raw().await.split("ZMQTOPICEND").collect::<Vec<&str>>().last()
+    {
+      Some(message) => message.to_string(),
+      None => "No message received".to_string()
+    }
+  }
+  
+  pub async fn receive_raw(&self) -> String
   {
     let message_result = self.socket.lock().await.recv_string(0);
     match message_result
     {
-      Ok(msg) =>
-        match msg.unwrap().split("ZMQTOPICEND").collect::<Vec<&str>>().last()
-        {
-          Some(message) => message.to_string(),
-          None => "No message received".to_string()
-        },
+      Ok(msg) => msg.unwrap(),
       Err(x) => x.to_string()
     }
   }
