@@ -25,9 +25,17 @@ impl Publisher
 
   pub fn send_string(&self, channel: &str, data: &str)
   {
-    let message = [channel,
-                   "ZMQTOPICEND",                   
-                   data].join("");
+    let message;
+    if channel != ""
+    {
+      message = [channel,
+                 "ZMQTOPICEND",                   
+                  data].join("");
+    }
+    else
+    {
+      message = data.to_string();
+    }
     
     tokio::spawn(
     {

@@ -10,10 +10,10 @@ pub async fn main()
     while true
     {
       println!("sending message {}", num);
-      publisher.send_string("Publisher",
+      publisher.send_string(["Publisher", args[1].as_str()].join("").as_str(),
                             ["Publisher", args[1].as_str(), chrono::Utc::now().timestamp_nanos().to_string().as_str(),
                             num.to_string().as_str()].join(" ").as_str());
-      std::thread::sleep(std::time::Duration::from_millis(1));
+      std::thread::sleep(std::time::Duration::from_millis(1000));
       num += 1;
     }
 }
