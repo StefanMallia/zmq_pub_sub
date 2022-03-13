@@ -1,9 +1,24 @@
 #!/bin/bash
 COMMAND="cargo run"
-gnome-terminal --working-directory=$PWD/message_bus -e "$COMMAND" 
-gnome-terminal --working-directory=$PWD/publisher_app -e "$COMMAND 1"
-gnome-terminal --working-directory=$PWD/publisher_app -e "$COMMAND 2"
-#gnome-terminal --working-directory=$PWD/publisher_app -e "$COMMAND 3"
-#gnome-terminal --working-directory=$PWD/publisher_app -e "$COMMAND 4"
-#gnome-terminal --working-directory=$PWD/publisher_app -e "$COMMAND 5"
-gnome-terminal --working-directory=$PWD/subscriber_app -e "$COMMAND"
+gnome-terminal --working-directory=$PWD/message_bus -- bash -c "$COMMAND; bash" 
+gnome-terminal --working-directory=$PWD/publisher_app -- \
+  bash -c "$COMMAND 1 \
+  & $COMMAND 2 \
+  & $COMMAND 3 \
+  & $COMMAND 4 \
+  & $COMMAND 5 \
+  & $COMMAND 6 \
+  & $COMMAND 7 \
+  & $COMMAND 8 \
+  & $COMMAND 9 \
+  & $COMMAND 10 \
+  & $COMMAND 11 \
+  & $COMMAND 12 \
+  & $COMMAND 13 \
+  & $COMMAND 14 \
+  & $COMMAND 15 \
+  & $COMMAND 16 \
+  & $COMMAND 17 \
+  & $COMMAND 18; bash"
+
+gnome-terminal --working-directory=$PWD/subscriber_app -- bash -c "$COMMAND; bash"
