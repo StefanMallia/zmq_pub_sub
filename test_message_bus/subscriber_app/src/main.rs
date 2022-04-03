@@ -1,8 +1,8 @@
 #[tokio::main]
 pub async fn main()
 {
-    let config_helper: config_helper::ConfigHelper = config_helper::ConfigHelper::new("appconfig.toml");
-    let message_bus_sub_address = config_helper.get_value("message_bus_address_xpub").unwrap();
+    let config_loader: config_loader::ConfigLoader = config_loader::ConfigLoader::new("appconfig.toml");
+    let message_bus_sub_address = config_loader.get_value("message_bus_address_xpub").unwrap();
 
     let subscriber = subscriber::Subscriber::new("Publisher", message_bus_sub_address.as_str(), false);
     let mut num = 0;
