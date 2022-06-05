@@ -7,7 +7,7 @@ pub struct Subscriber
 
 impl Subscriber
 {
-  pub fn new(channel: &str, connection_string: &str, bind: bool) -> Subscriber
+  pub fn new(channels: Vec<&str>, connection_string: &str, bind: bool) -> Subscriber
   {
     let ctx = zmq::Context::new();
     let socket = ctx.socket(zmq::SUB).unwrap();
@@ -19,9 +19,11 @@ impl Subscriber
     {
       socket.connect(connection_string).unwrap();
     }
-    let filter = channel.as_bytes();
-    socket.set_subscribe(&filter).unwrap();
-    //socket.bind("tcp://127.0.0.1:1239").unwrap();
+    for channel in channels
+    {
+      let filter = channel.as_bytes();
+      socket.set_subscribe(&filter).unwrap();
+    }
     let socket = Arc::new(futures::lock::Mutex::new(socket));
     Subscriber{socket}
   }
@@ -42,6 +44,16 @@ impl Subscriber
     {
       Ok(msg) => msg.unwrap(),
       Err(x) => x.to_string()
+    }
+  }
+
+  pub async fn subscribe(&self, channels: Vec<&str>)
+  {
+    let socket = self.socket.lock().await;
+    for channel in channels
+    {
+      let filter = channel.as_bytes();
+      socket.set_subscribe(&filter).unwrap();
     }
   }
 }
