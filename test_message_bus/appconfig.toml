@@ -1,2 +1,2 @@
-message_bus_address_xsub="tcp://127.0.0.1:13031"
-message_bus_address_xpub="tcp://127.0.0.1:13032"
+message_bus_address_sub="tcp://127.0.0.1:13031"
+message_bus_address_pub="tcp://127.0.0.1:13032"

@@ -2,9 +2,9 @@
 pub async fn main()
 {
     let config_loader: config_loader::ConfigLoader = config_loader::ConfigLoader::new("appconfig.toml");
-    let message_bus_sub_address = config_loader.get_value("message_bus_address_xpub").unwrap();
+    let message_bus_sub_address = config_loader.get_string("message_bus_address_pub").unwrap();
 
-    let subscriber = subscriber::Subscriber::new("Publisher", message_bus_sub_address.as_str(), false);
+    let subscriber = subscriber::Subscriber::new(vec!["Publisher"], message_bus_sub_address.as_str(), false);
     let mut num = 0;
     let mut sum_time_transit = 0;
     loop

@@ -3,7 +3,7 @@ pub async fn main()
 {
     let args: Vec<String> = std::env::args().collect();
     let config_loader: config_loader::ConfigLoader = config_loader::ConfigLoader::new("appconfig.toml");
-    let message_bus_pub_address = config_loader.get_value("message_bus_address_xsub").unwrap();
+    let message_bus_pub_address = config_loader.get_string("message_bus_address_sub").unwrap();
 
     let publisher = publisher::Publisher::new(message_bus_pub_address.as_str(), false);
     let mut num: i64 = 0;
