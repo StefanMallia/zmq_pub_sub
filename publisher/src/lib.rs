@@ -47,7 +47,24 @@ impl Publisher
     });
   }
 
-  pub fn send<T>(&self, channel: &str, data: &T)
+  pub fn send_bytes(&self, channel: &str, data: &[u8])
+  {
+    let message = [channel.as_bytes(),
+                  "ZMQTOPICEND".as_bytes(),                   
+                  data].concat();
+    
+    tokio::spawn(
+    {
+      let socket = Arc::clone(&self.socket);
+      async move
+      {
+        socket.lock().await.send(&message, 0).expect(format!("Failed to send: {:?}", &message).as_str());
+      }
+    });
+  }
+
+
+  pub fn send_serializable_object<T>(&self, channel: &str, data: &T)
     where T: ?Sized + serde::Serialize
   {
     let message = [channel,
