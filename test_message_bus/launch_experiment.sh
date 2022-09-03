@@ -1,7 +1,7 @@
 #!/bin/bash
 COMMAND="cargo run"
 gnome-terminal --working-directory=$PWD/message_bus -- bash -c "$COMMAND; bash" 
-gnome-terminal --working-directory=$PWD/publisher_app -- \
+gnome-terminal --working-directory=$PWD/publisher_app1 -- \
   bash -c "$COMMAND 1 \
   & $COMMAND 2 \
   & $COMMAND 3 \
@@ -20,5 +20,10 @@ gnome-terminal --working-directory=$PWD/publisher_app -- \
   & $COMMAND 16 \
   & $COMMAND 17 \
   & $COMMAND 18; bash"
+
+# publisher_app2 sends bytes
+gnome-terminal --working-directory=$PWD/publisher_app2 -- \
+  bash -c "$COMMAND 19; bash"
+
 
 gnome-terminal --working-directory=$PWD/subscriber_app -- bash -c "$COMMAND; bash"

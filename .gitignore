@@ -14,3 +14,7 @@ test_message_bus/subscriber_app/target
 
 test_message_bus/publisher_app/Cargo.lock
 test_message_bus/publisher_app/target
+
+
+**/target
+**/Cargo.lock
