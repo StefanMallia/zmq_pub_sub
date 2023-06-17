@@ -14,10 +14,12 @@ impl Publisher
     if bind
     {
       socket.bind(connection_string).unwrap();
+      rust_log::info!("Publisher listening on: {}", &connection_string)
     }
     else
     {
       socket.connect(connection_string).unwrap();
+      rust_log::info!("Publisher connected to: {}", &connection_string)
     }
     let socket = Arc::new(futures::lock::Mutex::new(socket));
     Publisher{socket}
