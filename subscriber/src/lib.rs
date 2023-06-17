@@ -14,10 +14,12 @@ impl Subscriber
     if bind
     {
       socket.bind(connection_string).unwrap();
+      rust_log::info!("Subscriber listening on: {}", &connection_string)
     }
     else
     {
       socket.connect(connection_string).unwrap();
+      rust_log::info!("Subscriber connected to: {}", &connection_string)
     }
     for channel in channels
     {
