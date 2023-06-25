@@ -1,5 +1,4 @@
-#[tokio::main]
-pub async fn main()
+pub fn main()
 {
     let config_loader: config_loader::ConfigLoader = config_loader::ConfigLoader::new("appconfig.toml");
     let message_bus_pub_address = config_loader.get_string("message_bus_address_pub").unwrap();
@@ -10,10 +9,9 @@ pub async fn main()
     loop
     {
 
-      let message = subscriber.receive_raw().await;
+      let message = subscriber.receive_raw();
       println!("{} Time received: {}", message, 
                chrono::Utc::now().timestamp_nanos());
       publisher.send_string("", &message.as_str());
     }
-
 }

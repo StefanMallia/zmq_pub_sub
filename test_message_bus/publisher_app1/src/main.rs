@@ -1,5 +1,4 @@
-#[tokio::main]
-pub async fn main()
+pub fn main()
 {
     let args: Vec<String> = std::env::args().collect();
     let config_loader: config_loader::ConfigLoader = config_loader::ConfigLoader::new("appconfig.toml");
@@ -10,9 +9,15 @@ pub async fn main()
     while true
     {
       println!("sending message {}", num);
-      publisher.send_string(["Publisher", args[1].as_str()].join("").as_str(),
-                            ["Publisher", args[1].as_str(), chrono::Utc::now().timestamp_nanos().to_string().as_str(),
-                            num.to_string().as_str()].join(" ").as_str());
+      
+      let channel = ["Publisher", args[1].as_str()].join("");
+      let message = [
+        "Publisher", args[1].as_str(),
+         chrono::Utc::now().timestamp_nanos().to_string().as_str(),
+        num.to_string().as_str()
+        ].join(" ");
+        
+      publisher.send_string(&channel, &message);
       std::thread::sleep(std::time::Duration::from_millis(100));
       num += 1;
     }

@@ -1,8 +1,6 @@
-use std::sync::Arc;
-
 pub struct Subscriber
 {
-  socket: Arc<futures::lock::Mutex<zmq::Socket>>,
+  socket: zmq::Socket,
 }
 
 impl Subscriber
@@ -11,37 +9,37 @@ impl Subscriber
   {
     let ctx = zmq::Context::new();
     let socket = ctx.socket(zmq::SUB).unwrap();
-    if bind
-    {
-      socket.bind(connection_string).unwrap();
-      rust_log::info!("Subscriber listening on: {}", &connection_string)
-    }
-    else
-    {
-      socket.connect(connection_string).unwrap();
-      rust_log::info!("Subscriber connected to: {}", &connection_string)
-    }
     for channel in channels
     {
       let filter = channel.as_bytes();
       socket.set_subscribe(&filter).unwrap();
     }
-    let socket = Arc::new(futures::lock::Mutex::new(socket));
+    if bind
+    {
+      socket.bind(connection_string).unwrap();
+      //ensure_subscriber_binding_startup_finished(ctx, connection_string, &socket);      
+    }
+    else
+    {      
+      socket.connect(connection_string).unwrap();
+      std::thread::sleep(std::time::Duration::from_millis(500));
+      rust_log::info!("Subscriber connected to: {}", &connection_string)
+    }
     Subscriber{socket}
   }
 
-  pub async fn receive(&self) -> String
+  pub fn receive(&self) -> String
   {    
-    match self.receive_raw().await.split("ZMQTOPICEND").collect::<Vec<&str>>().last()
+    match self.receive_raw().split("ZMQTOPICEND").collect::<Vec<&str>>().last()
     {
       Some(message) => message.to_string(),
       None => "No message received".to_string()
     }
   }
   
-  pub async fn receive_raw(&self) -> String
+  pub fn receive_raw(&self) -> String
   {
-    let message_result = self.socket.lock().await.recv_string(0);
+    let message_result = self.socket.recv_string(0);
     match message_result
     {
       Ok(msg) => msg.unwrap(),
@@ -49,15 +47,39 @@ impl Subscriber
     }
   }
 
-  pub async fn subscribe(&self, channels: Vec<&str>)
+  pub fn subscribe(&self, channels: Vec<&str>)
   {
-    let socket = self.socket.lock().await;
     for channel in channels
     {
       let filter = channel.as_bytes();
-      socket.set_subscribe(&filter).unwrap();
+      self.socket.set_subscribe(&filter).unwrap();
     }
   }
 }
 
+
+
+fn ensure_subscriber_binding_startup_finished(ctx: zmq::Context, connection_string: &str, socket: &zmq::Socket) {
+  let pub_socket = ctx.socket(zmq::PUB).unwrap();
+  pub_socket.connect(connection_string).unwrap();
+  let cancellation_token = std::sync::Arc::new(std::sync::RwLock::new(false));
+  let cancellation_token_clone = cancellation_token.clone();
+
+  std::thread::spawn(
+    move ||
+    {
+      while *cancellation_token_clone.read().unwrap() == false
+      {        
+        pub_socket.send("STARTUP_CONFIRMATION_CHANNEL", 0).unwrap();
+      }
+    }
+  );
+
+  socket.set_subscribe("STARTUP_CONFIRMATION_CHANNEL".as_bytes()).unwrap();
+  socket.recv_string(0).unwrap().unwrap();  
+  *cancellation_token.write().unwrap() = true;
+  socket.set_unsubscribe("STARTUP_CONFIRMATION_CHANNEL".as_bytes()).unwrap();
+
+  rust_log::info!("Subscriber listening on: {}", &connection_string)
+}
 
