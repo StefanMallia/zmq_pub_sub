@@ -17,7 +17,6 @@ impl Subscriber
     if bind
     {
       socket.bind(connection_string).unwrap();
-      //ensure_subscriber_binding_startup_finished(ctx, connection_string, &socket);      
     }
     else
     {      
@@ -55,31 +54,5 @@ impl Subscriber
       self.socket.set_subscribe(&filter).unwrap();
     }
   }
-}
-
-
-
-fn ensure_subscriber_binding_startup_finished(ctx: zmq::Context, connection_string: &str, socket: &zmq::Socket) {
-  let pub_socket = ctx.socket(zmq::PUB).unwrap();
-  pub_socket.connect(connection_string).unwrap();
-  let cancellation_token = std::sync::Arc::new(std::sync::RwLock::new(false));
-  let cancellation_token_clone = cancellation_token.clone();
-
-  std::thread::spawn(
-    move ||
-    {
-      while *cancellation_token_clone.read().unwrap() == false
-      {        
-        pub_socket.send("STARTUP_CONFIRMATION_CHANNEL", 0).unwrap();
-      }
-    }
-  );
-
-  socket.set_subscribe("STARTUP_CONFIRMATION_CHANNEL".as_bytes()).unwrap();
-  socket.recv_string(0).unwrap().unwrap();  
-  *cancellation_token.write().unwrap() = true;
-  socket.set_unsubscribe("STARTUP_CONFIRMATION_CHANNEL".as_bytes()).unwrap();
-
-  rust_log::info!("Subscriber listening on: {}", &connection_string)
 }
 
