@@ -21,7 +21,7 @@ impl Subscriber
     else
     {      
       socket.connect(connection_string).unwrap();
-      std::thread::sleep(std::time::Duration::from_millis(500));
+      std::thread::sleep(std::time::Duration::from_millis(2000));
       rust_log::info!("Subscriber connected to: {}", &connection_string)
     }
     Subscriber{socket}

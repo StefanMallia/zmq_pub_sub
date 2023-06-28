@@ -14,13 +14,11 @@ impl Publisher
     if bind
     {
       socket.bind(connection_string).unwrap();
-      let ctx = zmq::Context::new();
-      //ensure_publisher_binding_startup_finished(ctx, connection_string, &socket);
     }
     else
     {      
       socket.connect(connection_string).unwrap();      
-      std::thread::sleep(std::time::Duration::from_millis(500));
+      std::thread::sleep(std::time::Duration::from_millis(2000));
       rust_log::info!("Publisher connected to: {}", &connection_string)
     }    
     let queue = Arc::new(Mutex::new(VecDeque::<Box<[u8]>>::new()));
@@ -69,24 +67,6 @@ impl Publisher
     self.queue.lock().unwrap().push_back(message);
   }
 }
-
-fn ensure_publisher_binding_startup_finished(ctx: zmq::Context, connection_string: &str, socket: &zmq::Socket) {
-    let sub_socket = ctx.socket(zmq::SUB).unwrap();
-    sub_socket.connect(connection_string).unwrap();
-    let subscriber_socket_thread = std::thread::spawn(
-      move ||
-      {
-          sub_socket.set_subscribe("STARTUP_CONFIRMATION_CHANNEL".as_bytes()).unwrap();            
-          sub_socket.recv_string(0).unwrap().unwrap();            
-      }
-    );
-    while !subscriber_socket_thread.is_finished()
-    {
-      socket.send("STARTUP_CONFIRMATION_CHANNEL", 0).unwrap();
-    }
-    rust_log::info!("Publisher listening on: {}", &connection_string)
-}
-
 
 fn format_for_zmq<'a>(channel: &'a str, data:  &'a str) -> Box<[u8]>
 {
