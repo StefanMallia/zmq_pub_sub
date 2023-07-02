@@ -14,6 +14,7 @@ impl Publisher
     if bind
     {
       socket.bind(connection_string).unwrap();
+      rust_log::info!("Publisher listening on: {}", &connection_string)
     }
     else
     {      

@@ -17,6 +17,7 @@ impl Subscriber
     if bind
     {
       socket.bind(connection_string).unwrap();
+      rust_log::info!("Subscriber listening on: {}", &connection_string)
     }
     else
     {      
